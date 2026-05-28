@@ -1,0 +1,16 @@
+# Game engine
+pygame==2.5.2
+
+# ML stack
+torch==2.2.0
+mlflow==2.10.2
+scikit-learn==1.4.0
+
+# Data handling
+pandas==2.2.0
+numpy==1.26.3
+
+# Jupyter (optional, for notebooks)
+jupyter==1.0.0
+matplotlib==3.8.2
+seaborn==0.13.1

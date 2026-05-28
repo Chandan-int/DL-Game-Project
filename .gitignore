@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+venv/
+
+# MLflow
+mlruns/
+
+# Databases
+*.db
+
+# Model artifacts
+models/*.pt
+scoring/*.pt
+
+# OS
+.DS_Store
+Thumbs.db
