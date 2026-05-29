@@ -1,5 +1,5 @@
 # requirements-ci.txt
-mlflow
+mlflow>=2.13,<4
 azure-ai-ml==1.33.0
 azure-identity
 azure-storage-blob
