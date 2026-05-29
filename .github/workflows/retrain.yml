@@ -22,29 +22,27 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: pip
 
-      - name: Install PyTorch CPU
-        run: |
-          pip install torch==2.3.0 --index-url https://download.pytorch.org/whl/cpu
+      - name: Install PyTorch CPU only
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install remaining dependencies
-        run: |
-          pip install \
-            mlflow \
-            azure-ai-ml==1.33.0 \
-            azure-identity \
-            azure-storage-blob \
-            pandas numpy
+        run: pip install -r requirements-ci.txt
 
       - name: Azure login
         uses: azure/login@v2
         with:
-          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}"}'
+          creds: >-
+            {
+              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.AZURE_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+            }
 
       - name: Write azure_config.py
         run: |
-          cat > azure_config.py << 'EOF'
+          cat > azure_config.py << 'PYEOF'
           AZURE_CONFIG = {
               "subscription_id": "${{ secrets.AZURE_SUBSCRIPTION_ID }}",
               "resource_group":  "rg-game-ai-pipeline",
@@ -56,7 +54,7 @@ jobs:
               "endpoint_name":   "difficulty-endpoint",
               "deployment_name": "blue",
           }
-          EOF
+          PYEOF
 
       - name: Write MLflow URI
         run: python ci/write_mlflow_uri.py

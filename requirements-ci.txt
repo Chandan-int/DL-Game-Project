@@ -1,0 +1,7 @@
+# requirements-ci.txt
+mlflow
+azure-ai-ml==1.33.0
+azure-identity
+azure-storage-blob
+pandas
+numpy
