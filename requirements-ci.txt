@@ -1,7 +1,9 @@
 # requirements-ci.txt
-mlflow>=2.13,<4
-azure-ai-ml==1.33.0
+numpy
+pandas
+scikit-learn
+matplotlib
+mlflow>=3.0
+azure-ai-ml
 azure-identity
 azure-storage-blob
-pandas
-numpy
