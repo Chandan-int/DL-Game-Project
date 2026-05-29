@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - 'data/sessions.csv'
-    branches:
+    branches:az upgrade
       - main
   workflow_dispatch:
 

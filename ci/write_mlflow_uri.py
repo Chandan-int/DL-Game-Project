@@ -16,7 +16,7 @@ ml_client = MLClient(
     workspace_name="game-ai-mlops",
 )
 
-ws  = ml_client.workspaces.get("game-ai-mlops")
+ws  = ml_client.workspaces.get("game-ai-mlops-v2")
 uri = ws.mlflow_tracking_uri
 Path(".mlflow_uri").write_text(uri)
 print(f"[ci] ✅ MLflow URI written: {uri[:60]}...")
