@@ -4,49 +4,44 @@ name: Retrain Difficulty Model
 on:
   push:
     paths:
-      - 'data/sessions.csv'     # triggers only when session data changes
+      - 'data/sessions.csv'
     branches:
       - main
-
-  workflow_dispatch:             # allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
   retrain:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     steps:
-      # ── 1. Checkout code ───────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Set up Python ───────────────────────────────────────────────────
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
 
-      # ── 3. Install dependencies ────────────────────────────────────────────
-      - name: Install dependencies
+      - name: Install PyTorch CPU
+        run: |
+          pip install torch==2.3.0 --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install remaining dependencies
         run: |
           pip install \
-            torch==2.2.0 --index-url https://download.pytorch.org/whl/cpu \
-            mlflow==2.13.0 \
+            mlflow \
             azure-ai-ml==1.33.0 \
             azure-identity \
             azure-storage-blob \
             pandas numpy
 
-      # ── 4. Authenticate to Azure ───────────────────────────────────────────
       - name: Azure login
         uses: azure/login@v2
         with:
-          client-id:       ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id:       ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}"}'
 
-      # ── 5. Write config files ──────────────────────────────────────────────
       - name: Write azure_config.py
         run: |
           cat > azure_config.py << 'EOF'
@@ -64,28 +59,21 @@ jobs:
           EOF
 
       - name: Write MLflow URI
-        env:
-          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
         run: python ci/write_mlflow_uri.py
 
-      # ── 6. Upload new session data to Blob ────────────────────────────────
       - name: Upload sessions.csv to Azure Blob
         run: python upload_data.py
 
-      # ── 7. Retrain model ───────────────────────────────────────────────────
-      - name: Retrain model on Azure ML
+      - name: Retrain model
         run: python train_azure.py
 
-      # ── 8. Register best model ─────────────────────────────────────────────
       - name: Register best model
         run: python register_model.py
 
-      # ── 9. Update ACI with new model ──────────────────────────────────────
-      - name: Update ACI deployment
+      - name: Update ACI with new model
         env:
           ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
         run: python ci/update_aci.py
 
-      # ── 10. Smoke test endpoint ────────────────────────────────────────────
       - name: Test endpoint
         run: python test_endpoint.py
