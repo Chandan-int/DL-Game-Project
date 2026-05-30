@@ -1,22 +1,35 @@
 # ci/write_mlflow_uri.py
 """
-Fetches the Azure ML MLflow tracking URI during CI
-and writes it to .mlflow_uri so train_azure.py can read it.
+Fetches Azure ML MLflow tracking URI during CI and writes to .mlflow_uri.
+Uses explicit service principal credentials from environment variables
+set by the azure/login action.
 """
 
+import os
 from azure.ai.ml import MLClient
-from azure.identity import DefaultAzureCredential
+from azure.identity import ClientSecretCredential
 from pathlib import Path
 
-# In CI, azure/login action sets env vars automatically
+# These env vars are set automatically by azure/login action
+tenant_id       = os.environ["AZURE_TENANT_ID"]
+client_id       = os.environ["AZURE_CLIENT_ID"]
+client_secret   = os.environ["AZURE_CLIENT_SECRET"]
+subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+
+credential = ClientSecretCredential(
+    tenant_id=tenant_id,
+    client_id=client_id,
+    client_secret=client_secret,
+)
+
 ml_client = MLClient(
-    credential=DefaultAzureCredential(),
-    subscription_id="18d3a1a7-94e1-471d-a137-a704f081dee6",
+    credential=credential,
+    subscription_id=subscription_id,
     resource_group_name="rg-game-ai-pipeline",
     workspace_name="game-ai-mlops",
 )
 
-ws  = ml_client.workspaces.get("game-ai-mlops-v2")
+ws  = ml_client.workspaces.get("game-ai-mlops")
 uri = ws.mlflow_tracking_uri
 Path(".mlflow_uri").write_text(uri)
 print(f"[ci] ✅ MLflow URI written: {uri[:60]}...")
