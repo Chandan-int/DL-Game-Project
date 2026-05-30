@@ -6,6 +6,7 @@ import os
 import json
 import mlflow
 import mlflow.pytorch
+import azureml.mlflow
 import numpy as np
 import pandas as pd
 import torch

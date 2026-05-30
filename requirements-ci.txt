@@ -1,9 +1,13 @@
-# requirements-ci.txt
 numpy
 pandas
 scikit-learn
 matplotlib
-mlflow>=3.0
+
+torch
+
+mlflow==2.22.0
+azureml-mlflow==1.60.0
+
 azure-ai-ml
 azure-identity
 azure-storage-blob

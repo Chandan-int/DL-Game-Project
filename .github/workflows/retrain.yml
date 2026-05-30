@@ -36,7 +36,13 @@ jobs:
         run: python -m pip install --upgrade pip
 
       - name: Install remaining dependencies
-        run: pip install -r requirements-ci.txt
+        run: |
+          pip install -r requirements-ci.txt
+
+      - name: Verify Azure ML MLflow plugin
+        run: |
+          pip show mlflow
+          pip show azureml-mlflow
 
       - name: Azure login
         uses: azure/login@v2
