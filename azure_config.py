@@ -12,7 +12,7 @@ AZURE_CONFIG = {
     "location":         "centralindia",
 
     # Blob storage  ← fill in after Step 4
-    "storage_account":  "gameaimlstorage6275e6439",          # e.g. "gameaimlops1234567"
+    "storage_account":  "gameaimlstoragec2f3c5f65",          # e.g. "gameaimlops1234567"
     "data_container":   "game-telemetry",
 
     # Model registry
