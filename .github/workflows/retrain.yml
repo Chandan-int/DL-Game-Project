@@ -55,7 +55,7 @@ jobs:
           AZURE_CONFIG = {
               "subscription_id": "${{ secrets.AZURE_SUBSCRIPTION_ID }}",
               "resource_group":  "rg-game-ai-pipeline",
-              "workspace_name":  "game-ai-mlops",
+              "workspace_name":  "game-ai-mlops-v2",
               "location":        "centralindia",
               "storage_account": "gameaimlstorage6275e6439",
               "data_container":  "game-telemetry",
