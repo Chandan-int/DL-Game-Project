@@ -1,18 +1,24 @@
-# .github/workflows/retrain.yml
+#```yaml
 name: Retrain Difficulty Model
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'data/sessions.csv'
-    branches:az upgrade
-      - main
   workflow_dispatch:
 
 jobs:
   retrain:
     runs-on: ubuntu-latest
     timeout-minutes: 40
+
+    env:
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     steps:
       - name: Checkout repository
@@ -78,3 +84,4 @@ jobs:
 
       - name: Test endpoint
         run: python test_endpoint.py
+```
