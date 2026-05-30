@@ -57,7 +57,7 @@ jobs:
               "resource_group":  "rg-game-ai-pipeline",
               "workspace_name":  "game-ai-mlops-v2",
               "location":        "centralindia",
-              "storage_account": "gameaimlstorage6275e6439",
+              "storage_account": "gameaimlstoragec2f3c5f65",
               "data_container":  "game-telemetry",
               "model_name":      "DifficultyMLP",
               "endpoint_name":   "difficulty-endpoint",
