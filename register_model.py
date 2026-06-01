@@ -36,17 +36,21 @@ def find_best_run_id() -> tuple[str, float]:
         max_results=20,
     )
 
+    print("\nColumns returned by MLflow:")
+    for c in runs.columns:
+        print(c)
+
     finished = runs[
         (runs["status"] == "FINISHED") &
-        (runs["metrics.best_val_loss"].notna())
-    ]
+        (runs["metrics.val_loss"].notna())
+        ]
 
     if finished.empty:
-        raise RuntimeError("No finished runs with best_val_loss found")
+        raise RuntimeError("No finished runs with val_loss found")
 
-    best     = finished.loc[finished["metrics.best_val_loss"].idxmin()]
-    run_id   = best["run_id"]
-    val_loss = best["metrics.best_val_loss"]
+    best = finished.loc[finished["metrics.val_loss"].idxmin()]
+    run_id = best["run_id"]
+    val_loss = best["metrics.val_loss"]
 
     print(f"[register] Best run      : {run_id}")
     print(f"[register] best_val_loss : {val_loss:.6f}")
