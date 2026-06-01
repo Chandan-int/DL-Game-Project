@@ -12,7 +12,7 @@ from azure.identity import DefaultAzureCredential
 from azure_config import AZURE_CONFIG
 from pathlib import Path
 
-
+print("REGISTER_MODEL VERSION: 2026-06-01-FIXED")
 def get_ml_client() -> MLClient:
     return MLClient(
         credential=DefaultAzureCredential(),
