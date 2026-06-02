@@ -53,6 +53,7 @@ def main() -> None:
     print("[aci-update] ✅ Image rebuilt")
 
     # Get registry credentials
+    # import  json
     creds = json.loads(
         run(f"az acr credential show --name {REGISTRY_NAME}")
     )
@@ -90,7 +91,7 @@ def main() -> None:
         f"--name {ACI_NAME} --query ipAddress.ip --output tsv"
     )
 
-    import json
+    # import json
     config = {"endpoint_url": f"http://{ip}:{PORT}/score", "api_key": ""}
     Path("models/endpoint_config.json").write_text(json.dumps(config, indent=2))
     print(f"[aci-update] ✅ New endpoint: http://{ip}:{PORT}/score")
