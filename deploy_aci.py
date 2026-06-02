@@ -70,18 +70,20 @@ def main() -> None:
     # 5 — Deploy to ACI
     print("\n[aci] Deploying to Azure Container Instances...")
     run(
-        f'az container create '
-        f'--resource-group {rg} '
-        f'--name {ACI_NAME} '
-        f'--image {registry_server}/{IMAGE_NAME}:latest '
-        f'--registry-login-server {registry_server} '
-        f'--registry-username {REGISTRY_NAME} '
-        f'--registry-password "{registry_password}" '
-        f'--ports {PORT} '
-        f'--cpu 1 --memory 1.5 '
-        f'--location {loc} '
-        f'--os-type Linux'
+        f"az container create "
+        f"--resource-group {RG} "
+        f"--name {ACI_NAME} "
+        f"--image {REGISTRY_NAME}.azurecr.io/{IMAGE_NAME}:latest "
+        f"--registry-login-server {REGISTRY_NAME}.azurecr.io "
+        f"--registry-username {REGISTRY_NAME} "
+        f'--registry-password "{acr_password}" '
+        f"--ports {PORT} "
+        f"--ip-address Public "
+        f"--cpu 1 --memory 1.5 "
+        f"--location {LOCATION} "
+        f"--os-type Linux"
     )
+
 
     # 6 — Get public IP
     ip = run(
@@ -89,6 +91,12 @@ def main() -> None:
         f'--resource-group {rg} --name {ACI_NAME} '
         f'--query ipAddress.ip --output tsv'
     )
+    if not ip:
+        raise RuntimeError(
+            "ACI has no public IP assigned. "
+            "Check deployment configuration."
+        )
+
     endpoint_url = f"http://{ip}:{PORT}/score"
     print(f"\n[aci] ✅ Container running at : {ip}")
     print(f"[aci] ✅ Endpoint URL         : {endpoint_url}")

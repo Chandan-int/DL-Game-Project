@@ -79,6 +79,7 @@ def main() -> None:
         f"--registry-username {REGISTRY_NAME} "
         f'--registry-password "{acr_password}" '
         f"--ports {PORT} "
+        f"--ip-address Public "
         f"--cpu 1 --memory 1.5 "
         f"--location {LOCATION} "
         f"--os-type Linux"
@@ -90,6 +91,11 @@ def main() -> None:
         f"az container show --resource-group {RG} "
         f"--name {ACI_NAME} --query ipAddress.ip --output tsv"
     )
+    if not ip:
+        raise RuntimeError(
+            "ACI has no public IP assigned. "
+            "Check deployment configuration."
+        )
 
     # import json
     config = {"endpoint_url": f"http://{ip}:{PORT}/score", "api_key": ""}
