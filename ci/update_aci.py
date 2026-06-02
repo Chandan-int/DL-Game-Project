@@ -72,7 +72,7 @@ def main() -> None:
     # Redeploy with new image
     run(
         f"az container create "
-        f"--resource-group {RG} "
+        f"--resource-group {rg} "
         f"--name {ACI_NAME} "
         f"--image {REGISTRY_NAME}.azurecr.io/{IMAGE_NAME}:latest "
         f"--registry-login-server {REGISTRY_NAME}.azurecr.io "
