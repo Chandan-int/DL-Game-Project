@@ -8,6 +8,7 @@ import os
 import subprocess
 import shutil
 from pathlib import Path
+import json
 
 REGISTRY_NAME = "gameaidda"
 IMAGE_NAME    = "difficulty-predictor"
@@ -19,9 +20,22 @@ PORT          = 5001
 
 def run(cmd: str) -> str:
     print(f"[aci-update] $ {cmd}")
-    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+    result = subprocess.run(
+        cmd,
+        shell=True,
+        capture_output=True,
+        text=True
+    )
+
+    print(result.stdout)
+
     if result.returncode != 0:
-        raise RuntimeError(f"Command failed:\n{result.stderr}")
+        print(result.stderr)
+        raise RuntimeError(
+            f"Command failed:\n{result.stderr}"
+        )
+
     return result.stdout.strip()
 
 
@@ -36,7 +50,12 @@ def main() -> None:
     print("[aci-update] ✅ Image rebuilt")
 
     # Get registry credentials
-    acr_password = os.environ.get("ACR_PASSWORD", "")
+    creds = json.loads(
+        run(f"az acr credential show --name {REGISTRY_NAME}")
+    )
+
+    acr_username = creds["username"]
+    acr_password = creds["passwords"][0]["value"]
 
     # Delete old container
     try:
