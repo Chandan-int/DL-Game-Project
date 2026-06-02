@@ -28,10 +28,13 @@ def run(cmd: str) -> str:
         text=True
     )
 
+    print("STDOUT:")
     print(result.stdout)
 
+    print("STDERR:")
+    print(result.stderr)
+
     if result.returncode != 0:
-        print(result.stderr)
         raise RuntimeError(
             f"Command failed:\n{result.stderr}"
         )
