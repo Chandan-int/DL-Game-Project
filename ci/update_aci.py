@@ -55,11 +55,11 @@ def main() -> None:
     # Get registry credentials
     # import  json
     creds = json.loads(
-        run(f"az acr credential show --name {REGISTRY_NAME}")
+        run(f'az acr credential show --name {REGISTRY_NAME} --output json')
     )
 
-    acr_username = creds["username"]
-    acr_password = creds["passwords"][0]["value"]
+    registry_password = creds["passwords"][0]["value"]
+    registry_server = f"{REGISTRY_NAME}.azurecr.io"
 
     # Delete old container
     try:
@@ -71,18 +71,18 @@ def main() -> None:
 
     # Redeploy with new image
     run(
-        f"az container create "
-        f"--resource-group {rg} "
-        f"--name {ACI_NAME} "
-        f"--image {REGISTRY_NAME}.azurecr.io/{IMAGE_NAME}:latest "
-        f"--registry-login-server {REGISTRY_NAME}.azurecr.io "
-        f"--registry-username {REGISTRY_NAME} "
-        f'--registry-password "{acr_password}" '
-        f"--ports {PORT} "
-        f"--ip-address Public "
-        f"--cpu 1 --memory 1.5 "
-        f"--location {LOCATION} "
-        f"--os-type Linux"
+        f'az container create '
+        f'--resource-group {rg} '
+        f'--name {ACI_NAME} '
+        f'--image {registry_server}/{IMAGE_NAME}:latest '
+        f'--registry-login-server {registry_server} '
+        f'--registry-username {REGISTRY_NAME} '
+        f'--registry-password "{registry_password}" '
+        f'--ports {PORT} '
+        f'--ip-address Public '
+        f'--cpu 1 --memory 1.5 '
+        f'--location {loc} '
+        f'--os-type Linux'
     )
     print("[aci-update] ✅ New container deployed")
 
